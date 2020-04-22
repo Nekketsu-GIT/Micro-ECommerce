@@ -1,33 +1,38 @@
 package esp.dgi.mglsi.GalleryService.entities;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
+@Entity
 public class Gallery {
-	private int id;
-	private List<Object> produits;
+	
+	@Id
+    @GeneratedValue
+    private int id;
+	private String name;
 	
 	public Gallery() {
+		
 	}
-
-	public Gallery(int galleryId) {
-		this.id = galleryId;
+	
+	public Gallery(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
 	}
-
+	
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	public List<Object> getProduits() {
-		return produits;
+	public String getName() {
+		return name;
 	}
-
-	public void setProduits(List<Object> produits) {
-		this.produits = produits;
+	public void setName(String name) {
+		this.name = name;
 	}
-
 	
 }
