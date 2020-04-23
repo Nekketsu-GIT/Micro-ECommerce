@@ -1,15 +1,18 @@
 package esp.dgi.mglsi.GalleryService.controllers;
 
-import java.util.Arrays;
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import esp.dgi.mglsi.GalleryService.dao.GalleryDao;
 import esp.dgi.mglsi.GalleryService.dao.ProductDao;
@@ -20,8 +23,6 @@ import esp.dgi.mglsi.GalleryService.entities.Product;
 
 @RestController
 public class HomeController {
-	@Autowired
-	private Environment env;
 	
 	@Autowired
     private ProductDao productDao;
@@ -41,9 +42,36 @@ public class HomeController {
 	}
 	
     //Récupérer un produit par son Id
-    @GetMapping(value = "/Product/{id}")
+    @GetMapping(value = "/Products/{id}")
     public Product afficherUnProduit(@PathVariable int id) {
         return productDao.findById(id);
+    }
+    
+  //ajouter un produit
+    @PostMapping(value = "/Products")
+    public ResponseEntity<Void> ajouterProduit(@RequestBody Product product) {
+        Product productAdded =  productDao.save(product);
+        if (productAdded == null)
+            return ResponseEntity.noContent().build();
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(productAdded.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
+    }
+    
+    //supprimer produit
+    @DeleteMapping (value = "/Products/{id}")
+    public void supprimerProduit(@PathVariable int id) {
+        productDao.deleteById(id);
+    }
+    
+    //mettre à jour produit
+    @PutMapping (value = "/Products")
+    public void updateProduit(@RequestBody Product product) {
+        productDao.save(product);
     }
     
     //Récupérer les produits d'une gallerie
